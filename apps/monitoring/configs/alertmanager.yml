@@ -1,0 +1,12 @@
+global:
+  smtp_smarthost: 'mailhost:25'
+  smtp_from: 'TODO - FROM_EMAIL_ADDRESS'
+  smtp_require_tls: false
+route:
+  receiver: email
+  repeat_interval: 30m
+receivers:
+ - name: email
+   email_configs:
+    - to: 'TODO - TO_EMAIL_ADDRESS'
+      send_resolved: true

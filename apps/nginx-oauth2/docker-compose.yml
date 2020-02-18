@@ -1,0 +1,18 @@
+version: '3'
+services:
+  proxy:
+    image: quay.io/pusher/oauth2_proxy:{OAUTH2_PROXY_TAG}
+    ports:
+    - 127.0.0.1:4180:4180
+    volumes:
+    - /srv/etc/oauth2_proxy:/etc/oauth2_proxy:ro
+    command:
+    - '--config=/etc/oauth2_proxy/oauth2_proxy.cfg'
+  nginx:
+    image: nginx
+    ports:
+    - 80:80
+    - 443:443
+    volumes:
+    - /srv/etc/nginx:/etc/nginx:ro
+    - /srv/data/nginx/html:/usr/share/nginx/html:ro

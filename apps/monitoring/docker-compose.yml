@@ -1,0 +1,56 @@
+version: '3'
+services:
+  prometheus:
+    image: prom/prometheus
+    restart: always
+    ports:
+    - 127.0.0.1:9090:9090
+    volumes:
+    - /srv/data/prometheus:/prometheus
+    - /srv/etc/prometheus:/etc/prometheus:ro
+    command:
+    - '--config.file=/etc/prometheus/prometheus.yml'
+    - '--storage.tsdb.path=/prometheus'
+    - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+    - '--web.console.templates=/usr/share/prometheus/consoles'
+    - '--web.external-url=https://${MONSITE_FQDN}/prometheus'
+  alertmanager:
+    image: prom/alertmanager
+    restart: always
+    ports:
+    - 127.0.0.1:9093:9093
+    volumes:
+    - /srv/data/alertmanager:/alertmanager
+    - /srv/etc/alertmanager:/etc/alertmanager:ro
+    command:
+    - '--config.file=/etc/alertmanager/alertmanager.yml'
+    - '--storage.path=/alertmanager'
+    - '--web.external-url=https://${MONSITE_FQDN}/alertmanager'
+    extra_hosts:
+    - 'mailhost:${MAILHOST_IP}'
+  grafana:
+    image: grafana/grafana
+    restart: always
+    ports:
+    - 127.0.0.1:3000:3000
+    volumes:
+    - /srv/etc/grafana/grafana.ini:/etc/grafana/grafana.ini:ro
+    - /srv/data/grafana:/var/lib/grafana
+  proxy:
+    image: quay.io/pusher/oauth2_proxy:${OAUTH2_PROXY_TAG}
+    restart: always
+    ports:
+    - 127.0.0.1:4180:4180
+    volumes:
+    - /srv/etc/oauth2_proxy:/etc/oauth2_proxy:ro
+    command:
+    - '--config=/etc/oauth2_proxy/oauth2_proxy.cfg'
+  nginx:
+    image: nginx
+    restart: always
+    ports:
+    - 80:80
+    - 443:443
+    volumes:
+    - /srv/etc/nginx:/etc/nginx:ro
+    - /srv/data/nginx/html:/usr/share/nginx/html:ro

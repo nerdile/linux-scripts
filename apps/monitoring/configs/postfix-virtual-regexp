@@ -1,0 +1,7 @@
+# Allowed senders come first
+# Then - the default recipient
+# Remember to run postmap after updating this file
+
+/example@example\.com/ example@example.com
+/.+@.+/ default@example.com
+
